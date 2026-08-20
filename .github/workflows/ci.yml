@@ -36,10 +36,10 @@ jobs:
       ALEMBIC_DATABASE_URL: postgresql+asyncpg://seshat:ci-throwaway@localhost:5432/seshat_test
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Установить uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v9
         with:
           enable-cache: true
 

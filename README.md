@@ -5,13 +5,35 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-API--first-009688?logo=fastapi&logoColor=white)
 ![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 
-Seshat превращает планы на естественном языке в проверяемые записи, напоминает
-о них по расписанию и хранит состояние так, чтобы перезапуск процесса не приводил
-к потере или дублированию уведомлений. Telegram-бот — первый клиент; бизнес-логика
-вынесена в самостоятельный domain-слой и доступна через FastAPI.
+> **RU:** API-first планировщик: естественный язык → проверяемая запись →
+> надёжное расписание и напоминания без зависимости delivery path от LLM.
+>
+> **EN:** An API-first personal planner: natural language → validated record →
+> durable scheduling and reminders, with no LLM dependency in the delivery path.
+
+Seshat превращает планы на естественном языке в события, задачи и рутины,
+проверяет structured output кодом и сохраняет напоминания в PostgreSQL так,
+чтобы перезапуск процесса не приводил к потере или дублированию доставки.
+Telegram-бот — первый клиент; те же domain operations доступны через FastAPI.
 
 > Проект находится в активной разработке: это рабочий single-user прототип,
 > а не завершённый массовый продукт.
+
+**Review path:** [Architecture](#architecture--архитектура) ·
+[Current status](#текущая-стадия) · [Engineering decisions](#инженерные-решения) ·
+[Security](#безопасность) · [AI disclosure](#авторство-и-ai-assisted-development)
+
+## Architecture / Архитектура
+
+![Seshat architecture: Telegram and HTTP adapters, deterministic domain services, bounded AI parsing and database-backed delivery](docs/assets/seshat-architecture.svg)
+
+Both clients share one deterministic domain layer. AI is limited to bounded
+input parsing; code owns validation and business rules. Recurrence
+materialization, retries, quiet hours and delivery state remain database-backed
+and recoverable without an AI provider.
+
+_Original vector prepared for the employer-facing portfolio from this
+repository's documented architecture; no third-party visual assets are used._
 
 ## Текущая стадия
 
@@ -42,7 +64,7 @@ Seshat превращает планы на естественном языке 
 - семидневная production-приёмка и Google Calendar ещё впереди;
 - регистрация нескольких пользователей и продуктовые лимиты относятся ко второму roadmap.
 
-## Архитектура
+## Detailed architecture / Подробная архитектура
 
 ```mermaid
 flowchart LR

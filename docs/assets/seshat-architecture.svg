@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+  <title id="title">Seshat architecture</title><desc id="desc">Telegram and HTTP clients share a deterministic domain layer, while AI is limited to input parsing and delivery is database-backed.</desc>
+  <defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#06111c"/><stop offset="1" stop-color="#02070d"/></linearGradient><linearGradient id="n" x2="1" y2="1"><stop stop-color="#0b2634"/><stop offset="1" stop-color="#07141e"/></linearGradient><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#43e8ef"/></marker><filter id="g"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><style>.n{fill:url(#n);stroke:#226a79;stroke-width:1.5}.c{stroke:#43e8ef}.l{fill:none;stroke:#43e8ef;stroke-width:2;marker-end:url(#a)}.d{stroke-dasharray:8 7}.t{fill:#edfcff;font:600 19px Arial}.s{fill:#88abb7;font:14px Arial}.k{fill:#43e8ef;font:14px Arial;letter-spacing:4px}</style></defs>
+  <rect width="1200" height="660" rx="28" fill="url(#bg)"/><text x="48" y="48" class="k">SESHAT / API-FIRST PLANNING CORE</text><path d="M30 72H1170" stroke="#123545"/>
+  <rect x="48" y="124" width="200" height="70" rx="14" class="n"/><text x="148" y="166" text-anchor="middle" class="t">Telegram</text>
+  <rect x="48" y="230" width="200" height="70" rx="14" class="n"/><text x="148" y="272" text-anchor="middle" class="t">HTTP client</text>
+  <rect x="314" y="124" width="212" height="70" rx="14" class="n"/><text x="420" y="165" text-anchor="middle" class="t">aiogram adapter</text>
+  <rect x="314" y="230" width="212" height="70" rx="14" class="n"/><text x="420" y="272" text-anchor="middle" class="t">FastAPI adapter</text>
+  <rect x="596" y="150" width="252" height="124" rx="18" class="n c" filter="url(#g)"/><text x="722" y="199" text-anchor="middle" class="t">Domain services</text><text x="722" y="228" text-anchor="middle" class="s">validation · scheduling</text><text x="722" y="252" text-anchor="middle" class="s">reactions · timezone rules</text>
+  <rect x="914" y="150" width="238" height="124" rx="18" class="n"/><text x="1033" y="199" text-anchor="middle" class="t">PostgreSQL</text><text x="1033" y="228" text-anchor="middle" class="s">durable entries</text><text x="1033" y="252" text-anchor="middle" class="s">notifications + audit</text>
+  <path d="M248 159H314M248 265H314M526 159H560Q578 159 596 188M526 265H560Q578 265 596 236M848 212H914" class="l"/>
+  <rect x="596" y="354" width="252" height="94" rx="16" class="n"/><text x="722" y="391" text-anchor="middle" class="t">Structured parser</text><text x="722" y="418" text-anchor="middle" class="s">schema + business validation</text>
+  <rect x="914" y="354" width="238" height="94" rx="16" class="n"/><text x="1033" y="391" text-anchor="middle" class="t">AI provider</text><text x="1033" y="418" text-anchor="middle" class="s">input parsing only</text>
+  <path d="M722 274V354M848 401H914" class="l d"/>
+  <rect x="314" y="520" width="212" height="80" rx="16" class="n"/><text x="420" y="553" text-anchor="middle" class="t">Materializer</text><text x="420" y="578" text-anchor="middle" class="s">future occurrences</text>
+  <rect x="596" y="520" width="252" height="80" rx="16" class="n c"/><text x="722" y="553" text-anchor="middle" class="t">DB-backed tick loop</text><text x="722" y="578" text-anchor="middle" class="s">quiet hours · retry</text>
+  <rect x="914" y="520" width="238" height="80" rx="16" class="n"/><text x="1033" y="553" text-anchor="middle" class="t">Reminder delivery</text><text x="1033" y="578" text-anchor="middle" class="s">no AI dependency</text>
+  <path d="M420 520V480Q420 466 438 466H1015Q1033 466 1033 448" class="l d"/><path d="M526 560H596M848 560H914" class="l"/>
+</svg>

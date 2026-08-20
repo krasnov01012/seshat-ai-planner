@@ -1,0 +1,75 @@
+# Локальный стек приложения: API, бот и PostgreSQL.
+#
+# Порты публикуются ТОЛЬКО на loopback. Docker обходит UFW, поэтому публикация
+# на 0.0.0.0 открыла бы БД в интернет.
+
+# Имя проекта задано явно. Иначе Compose берёт его из имени каталога, и после
+# переименования папки контейнеры и тома «потеряются» под новым префиксом.
+name: seshat
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      # Сервер и БД живут в UTC. Таймзона пользователя хранится отдельно
+      # и применяется только при отображении — см. docs/ARCHITECTURE.md.
+      TZ: UTC
+    ports:
+      # 5433, чтобы не конфликтовать с локально установленным PostgreSQL
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    logging: *default-logging
+
+  # Один образ, две точки входа. Вся логика лежит в слое домена, поэтому
+  # HTTP-интерфейс и бот равноправны: всё, что умеет бот, доступно и по API.
+  api:
+    build: .
+    command: ["python", "-m", "seshat.api"]
+    env_file:
+      - .env
+    environment:
+      # Внутри сети Compose обращаемся к контейнеру по имени сервиса
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      TZ: UTC
+    ports:
+      # Только loopback. Внешний ingress настраивается отдельно.
+      - "127.0.0.1:8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *default-logging
+
+  bot:
+    build: .
+    command: ["python", "-m", "seshat"]
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      TZ: UTC
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *default-logging
+
+volumes:
+  pgdata:

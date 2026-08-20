@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+# Секреты в CI не нужны: тесты не ходят во внешнюю сеть и не обращаются
+# ни к NVIDIA, ни к Telegram.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    # Схема проверяется на настоящей PostgreSQL: частичные индексы, timestamptz,
+    # ARRAY, JSONB и составные UNIQUE в SQLite ведут себя иначе или отсутствуют.
+    # Пароль ниже — одноразовый для эфемерного контейнера, секретом не является.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: seshat
+          POSTGRES_PASSWORD: ci-throwaway
+          POSTGRES_DB: seshat_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U seshat"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      TEST_DATABASE_URL: postgresql+asyncpg://seshat:ci-throwaway@localhost:5432/seshat_test
+      ALEMBIC_DATABASE_URL: postgresql+asyncpg://seshat:ci-throwaway@localhost:5432/seshat_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Установить uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Синхронизировать зависимости
+        run: uv sync --frozen
+
+      - name: ruff check
+        run: uv run ruff check .
+
+      - name: ruff format
+        run: uv run ruff format --check .
+
+      # Миграция обязана накатываться и откатываться. Проверенный откат —
+      # требование пункта 1.6 роадмапа, а не пожелание.
+      - name: Миграции вверх, вниз и снова вверх
+        run: |
+          uv run alembic upgrade head
+          uv run alembic downgrade base
+          uv run alembic upgrade head
+
+      - name: pytest
+        run: uv run pytest

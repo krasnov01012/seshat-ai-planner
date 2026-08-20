@@ -1,0 +1,44 @@
+# Секреты
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+credentials*.json
+token*.json
+
+# Файлы с ключами и токенами, положенные рядом с кодом.
+# Классы символов вместо букв — на случай core.ignorecase и разного регистра имён.
+*[Aa][Pp][Ii]*[Kk][Ee][Yy]*.txt
+*[Tt][Oo][Kk][Ee][Nn]*.txt
+*[Тт][Оо][Кк][Ее][Нн]*.txt
+*[Kk][Ee][Yy]*.txt
+tools/*.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Данные
+*.db
+*.sqlite3
+pgdata/
+dumps/
+
+# Результаты замеров (содержат сырые ответы моделей)
+bench_results.json
+
+# Среда
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

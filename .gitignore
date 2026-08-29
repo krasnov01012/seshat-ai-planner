@@ -2,11 +2,23 @@
 .env
 .env.*
 !.env.example
+*.local.*
 *.key
 *.pem
+*.p12
+*.pfx
+*.jks
 secrets/
+private/
+staging/
 credentials*.json
 token*.json
+rclone.conf
+
+# Operational source is intentionally outside this public snapshot.
+/config/
+/deploy/
+/inventory/
 
 # Файлы с ключами и токенами, положенные рядом с кодом.
 # Классы символов вместо букв — на случай core.ignorecase и разного регистра имён.
@@ -33,6 +45,10 @@ htmlcov/
 *.sqlite3
 pgdata/
 dumps/
+backups/
+*.dump
+*.backup
+*.bak
 
 # Результаты замеров (содержат сырые ответы моделей)
 bench_results.json
